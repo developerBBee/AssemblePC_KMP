@@ -20,6 +20,13 @@ kotlin {
     }
 
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.crashlytics)
+            implementation(libs.firebase.perf)
+            implementation(libs.crashkios.crashlytics)
+        }
+
         androidMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
