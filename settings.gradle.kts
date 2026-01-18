@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "AssemblePC"
-include(":app")
+include(":composeApp")
