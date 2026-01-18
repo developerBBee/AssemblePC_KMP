@@ -3,16 +3,14 @@ agp = "8.13.2"
 kotlin = "2.2.21"
 ksp = "2.2.21-2.0.4"
 gms = "4.4.4"
-crashlytics = "3.0.6"
-perf = "2.0.2"
 hilt = "2.57.2"
-composeMultiplatform = "1.10.0"
+composeMultiplatform = "1.9.3"
 
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.1"
 composeBom = "2025.12.00"
-firebaseBom = "34.7.0"
+gitLiveFirebase = "2.4.0"
 retrofit = "3.0.0"
 moshiKotlin = "1.15.2"
 room = "2.8.4"
@@ -42,11 +40,10 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
-firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
+firebase-crashlytics = { group = "dev.gitlive", name = "firebase-crashlytics", version.ref = "gitLiveFirebase" }
+firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "gitLiveFirebase" }
+firebase-auth = { group = "dev.gitlive", name = "firebase-auth", version.ref = "gitLiveFirebase" }
+firebase-perf = { group = "dev.gitlive", name = "firebase-perf", version.ref = "gitLiveFirebase" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
 converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
@@ -85,7 +82,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
-firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }

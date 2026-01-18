@@ -8,8 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.gms)
-    alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.firebase.perf)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
 }
@@ -23,19 +21,21 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.lifecycle.runtime.ktx)
             implementation(libs.androidx.activity.compose)
-            implementation(platform(libs.androidx.compose.bom))
             implementation(libs.androidx.ui)
             implementation(libs.androidx.ui.tooling.preview)
             implementation(libs.androidx.material)
             implementation(libs.kotlin.serialization.json)
 
-            implementation(platform(libs.firebase.bom))
-            implementation(libs.firebase.analytics)
-            implementation(libs.firebase.crashlytics)
-            implementation(libs.firebase.perf)
             implementation(libs.retrofit)
             implementation(libs.converter.moshi)
             implementation(libs.converter.kotlinx.serialization)

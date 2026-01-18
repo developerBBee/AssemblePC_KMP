@@ -43,8 +43,8 @@ private fun HeaderContent(
     val assemblyName = composition.assemblyName
     val totalPriceText = composition.items.map { it.devicePriceRecent * it.quantity }.sumYen()
 
-    val screenWidth = LocalWindowInfo.current.containerDpSize.width
-    val fontSize = if (screenWidth < 600.dp) 18.sp else 24.sp
+    val screenWidth = LocalWindowInfo.current.containerSize.width
+    val fontSize = if (screenWidth < 600) 18.sp else 24.sp
 
     Surface(
         modifier = modifier,
