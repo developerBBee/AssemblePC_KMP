@@ -1,6 +1,6 @@
-# AsseemblePC_AndroidApp
+# AssemblePC_KMP
 <pre>
-Assemble PC Android app built using Jetpack Compose.
+Assemble PC Android and iOS app built using Jetpack Compose Multiplatform.
 This app is useful for selecting parts for your own PC and estimating the total cost.
 In May 2023, the app was published on the PlayStore.
 </pre>
