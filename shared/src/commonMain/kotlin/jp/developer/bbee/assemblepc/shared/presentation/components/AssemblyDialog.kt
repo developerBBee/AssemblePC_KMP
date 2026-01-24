@@ -35,6 +35,7 @@ import assemblepc.shared.generated.resources.label_cancel
 import assemblepc.shared.generated.resources.label_change
 import assemblepc.shared.generated.resources.label_delete
 import assemblepc.shared.generated.resources.label_link_to_website
+import assemblepc.shared.generated.resources.no_image
 import assemblepc.shared.generated.resources.title_add_assembly
 import assemblepc.shared.generated.resources.title_edit_assembly
 import coil3.compose.AsyncImage
@@ -42,6 +43,7 @@ import jp.developer.bbee.assemblepc.shared.common.Constants
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.NumberEditor
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -79,7 +81,7 @@ fun AssemblyDialog(
     }.let { stringResource(it) }
 
     AlertDialog(
-        modifier = Modifier,//.semantics { testTagsAsResourceId = Constants.DEBUG },
+        modifier = Modifier,
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(10.dp),
         title = {
@@ -90,16 +92,14 @@ fun AssemblyDialog(
             )
         },
         text = {
-            Row (
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ){
+            Row(horizontalArrangement = Arrangement.Center) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ){
                     AsyncImage(
                         model = device.imgUrl,
+                        placeholder = painterResource(Res.drawable.no_image),
                         modifier = Modifier
                             .padding(end = 10.dp, bottom = 2.dp)
                             .height(100.dp)
@@ -110,7 +110,7 @@ fun AssemblyDialog(
                     Text(
                         text = device.price.yenOrUnknown(),
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 }
 
@@ -120,11 +120,11 @@ fun AssemblyDialog(
         buttons = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     TextButton(
                         onClick = { uriHandler.openUri(device.url) },
@@ -136,7 +136,7 @@ fun AssemblyDialog(
                     }
                     NumberEditor(
                         value = editQuantity,
-                        onValueChange = { editQuantity = it }
+                        onValueChange = { editQuantity = it },
                     )
                 }
 
@@ -162,7 +162,7 @@ fun AssemblyDialog(
                             } else {
                                 onAddAssembly(device, editQuantity, isEdit)
                             }
-                        }
+                        },
                     ) {
                         Text(text = editButtonText)
                     }
@@ -174,9 +174,9 @@ fun AssemblyDialog(
                                 .padding(end = 10.dp)
                                 .testTag("delete_assembly_button"),
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = MaterialTheme.colors.error
+                                backgroundColor = MaterialTheme.colors.error,
                             ),
-                            onClick = { onDeleteAssembly(device, quantity) }
+                            onClick = { onDeleteAssembly(device, quantity) },
                         ) {
                             Text(text = stringResource(Res.string.label_delete))
                         }

@@ -34,6 +34,7 @@ import assemblepc.shared.generated.resources.keyboard
 import assemblepc.shared.generated.resources.lcd_monitor
 import assemblepc.shared.generated.resources.motherboard
 import assemblepc.shared.generated.resources.mouse
+import assemblepc.shared.generated.resources.no_image
 import assemblepc.shared.generated.resources.os_soft
 import assemblepc.shared.generated.resources.pc_case
 import assemblepc.shared.generated.resources.pc_memory
@@ -49,6 +50,7 @@ import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.presentation.common.BaseBGPreview
 import jp.developer.bbee.assemblepc.shared.presentation.components.MultipleTotalPrice
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.ExperimentalTime
@@ -76,6 +78,7 @@ fun AssemblyRow(
             ) {
                 AsyncImage(
                     model = item.deviceImgUrl,
+                    placeholder = painterResource(Res.drawable.no_image),
                     modifier = Modifier
                         .padding(5.dp)
                         .height(80.dp)

@@ -24,11 +24,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.item_image_description
+import assemblepc.shared.generated.resources.no_image
 import coil3.compose.AsyncImage
 import jp.developer.bbee.assemblepc.shared.common.Constants
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.presentation.common.BaseBGPreview
 import jp.developer.bbee.assemblepc.shared.presentation.components.MultipleTotalPrice
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -71,6 +73,7 @@ fun DeviceRow(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
                             model = device.imgUrl,
+                            placeholder = painterResource(Res.drawable.no_image),
                             modifier = Modifier
                                 .height(80.dp)
                                 .width(80.dp),

@@ -21,6 +21,7 @@ import assemblepc.shared.generated.resources.assembly_name
 import assemblepc.shared.generated.resources.assembly_total_price
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.domain.model.sumYen
+import jp.developer.bbee.assemblepc.shared.presentation.common.getScreenWidthDp
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -45,7 +46,7 @@ private fun HeaderContent(
     val assemblyName = composition.assemblyName
     val totalPriceText = composition.items.map { it.devicePriceRecent * it.quantity }.sumYen()
 
-    val screenWidth = LocalWindowInfo.current.containerSize.width
+    val screenWidth = getScreenWidthDp()
     val fontSize = if (screenWidth < 600) 18.sp else 24.sp
 
     Surface(
