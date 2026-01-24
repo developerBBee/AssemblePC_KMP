@@ -10,10 +10,10 @@ import jp.developer.bbee.assemblepc.shared.domain.model.toPrice
 import kotlin.time.ExperimentalTime
 
 object Constants {
-    const val DEBUG: Boolean = true
-    const val BASE_URL = "https://www.pcbuilding.link/"
+    const val IS_DEBUG: Boolean = true
+    const val BASE_URL: String = "https://www.pcbuilding.link/"
 
-    val KANA_HALF_TO_FULL = mapOf(
+    val KANA_HALF_TO_FULL: Map<String, String> = mapOf(
         "ｱ" to "ア",
         "ｲ" to "イ",
         "ｳ" to "ウ",
@@ -105,7 +105,7 @@ object Constants {
         "ｦﾞ" to "ヺ",
     )
 
-    val DEVICE_SAMPLE = Device(
+    val DEVICE_SAMPLE: Device = Device(
         id = "1",
         device = DeviceType.MEMORY.key,
         name = "DDR4-3200 16GB x2",
@@ -122,7 +122,7 @@ object Constants {
         lastUpdate = null,
     )
 
-    val ASSEMBLY_SAMPLE = Assembly(
+    val ASSEMBLY_SAMPLE: Assembly = Assembly(
         id = 1,
         assemblyId = 1,
         assemblyName = "サンプル構成",
@@ -135,7 +135,7 @@ object Constants {
         devicePriceRecent = DEVICE_SAMPLE.price,
     )
 
-    val COMPOSITION_SAMPLE = Composition.of(
+    val COMPOSITION_SAMPLE: Composition = Composition.of(
         assemblyId = ASSEMBLY_SAMPLE.assemblyId,
         assemblyName = ASSEMBLY_SAMPLE.assemblyName,
         reviewText = null,

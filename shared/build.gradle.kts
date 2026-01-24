@@ -25,6 +25,8 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "shared"
             isStatic = true
+            // Required when using NativeSQLiteDriver
+            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -61,16 +63,6 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.material.icons.core)
-            implementation(libs.androidx.material.icons.extended)
-
-//            implementation(libs.firebase.analytics)
-//            implementation(libs.firebase.crashlytics)
-//            implementation(libs.firebase.perf)
-            implementation(libs.retrofit)
-            implementation(libs.converter.kotlinx.serialization)
-
             implementation(libs.ktor.android.client)
         }
 
