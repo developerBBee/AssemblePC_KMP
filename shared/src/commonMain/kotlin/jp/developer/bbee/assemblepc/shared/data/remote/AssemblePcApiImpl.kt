@@ -1,8 +1,12 @@
 package jp.developer.bbee.assemblepc.shared.data.remote
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -24,6 +28,14 @@ class AssemblePcApiImpl : AssemblePcApi {
     private val client: HttpClient = HttpClient {
         install(ContentNegotiation) {
             json(defaultJson)
+        }
+        install(Logging) {
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Napier.d(message, tag = "Ktor")
+                }
+            }
+            level = LogLevel.BODY
         }
     }
 

@@ -34,6 +34,8 @@ import jp.developer.bbee.assemblepc.shared.presentation.screen.assembly.Assembly
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.DeviceViewModel
 import jp.developer.bbee.assemblepc.shared.presentation.screen.selection.SelectionViewModel
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.TopViewModel
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -43,6 +45,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 expect val targetModule: Module
+
+fun initializeNapier() {
+    Napier.base(DebugAntilog())
+}
 
 private val sharedModule = module {
     single<AssemblyDeviceDao> { get<AppDatabase>().getAssemblyDeviceDao() }
@@ -81,6 +87,7 @@ private val viewModelModule = module {
 fun initializeKoin(
     config: (KoinApplication.() -> Unit)? = null
 ) {
+    initializeNapier()
     startKoin {
         config?.invoke(this)
         modules(targetModule, sharedModule, viewModelModule)
