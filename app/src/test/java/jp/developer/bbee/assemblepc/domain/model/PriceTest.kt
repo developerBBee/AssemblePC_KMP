@@ -1,7 +1,9 @@
 package jp.developer.bbee.assemblepc.domain.model
 
 import com.google.common.truth.Truth
-import jp.developer.bbee.assemblepc.common.defaultJson
+import jp.developer.bbee.assemblepc.shared.common.defaultJson
+import jp.developer.bbee.assemblepc.shared.domain.model.Price
+import jp.developer.bbee.assemblepc.shared.domain.model.toPrice
 import kotlinx.serialization.Serializable
 import org.junit.Test
 
