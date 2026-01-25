@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +37,7 @@ import assemblepc.shared.generated.resources.ic_launcher_foreground
 import assemblepc.shared.generated.resources.start_assembly
 import assemblepc.shared.generated.resources.start_assembly_guide
 import jp.developer.bbee.assemblepc.shared.common.Constants
+import jp.developer.bbee.assemblepc.shared.common.now
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
 import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
@@ -46,12 +48,10 @@ import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.Cr
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.DeleteAssemblyConfirmDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.EditAssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.RenameAssemblyConfirmDialog
-import jp.developer.bbee.assemblepc.shared.common.now
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
