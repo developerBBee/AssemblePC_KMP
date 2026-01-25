@@ -38,7 +38,6 @@ android {
         }
     }
     compileOptions {
-        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -68,22 +67,10 @@ room {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugar)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material)
-    testImplementation(libs.junit)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.kotlinx.serialization.json)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

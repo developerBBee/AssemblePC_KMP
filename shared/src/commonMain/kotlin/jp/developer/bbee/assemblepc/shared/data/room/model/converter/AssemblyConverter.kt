@@ -6,7 +6,6 @@ import jp.developer.bbee.assemblepc.shared.common.toTokyoInstant
 import jp.developer.bbee.assemblepc.shared.data.room.model.Assembly as DataAssembly
 import jp.developer.bbee.assemblepc.shared.domain.model.Assembly
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 object AssemblyConverter {
     fun Assembly.toData(): DataAssembly = DataAssembly(

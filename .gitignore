@@ -52,3 +52,5 @@ debug/
 release/
 
 .kotlin
+
+UserInterfaceState.xcuserstate
