@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.navigation_icon_description
 import jp.developer.bbee.assemblepc.shared.common.Constants
@@ -18,7 +19,6 @@ import jp.developer.bbee.assemblepc.shared.presentation.ROUTE_LIST
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
 import jp.developer.bbee.assemblepc.shared.presentation.theme.AssemblePCTheme
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BottomNavBar(

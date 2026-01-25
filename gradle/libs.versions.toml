@@ -1,33 +1,37 @@
 [versions]
-agp = "8.13.2"
-kotlin = "2.2.21"
-ksp = "2.2.21-2.0.4"
+compileSdk = "36"
+targetSdk = "36"
+minSdk = "24"
+agp = "9.0.0"
+kotlin = "2.3.0"
+cmp = "1.10.0"
+ksp = "2.3.4"
 gms = "4.4.4"
 crashlytics = "3.0.6"
 perf = "2.0.2"
-
-# KMP/CMP
-composeMultiplatform = "1.7.3"
 navigation = "2.9.1"
-activityCompose = "1.12.1"
-composeBom = "2025.12.00"
-firebaseBom = "34.7.0"
+activityCompose = "1.12.2"
+firebaseBom = "34.8.0"
 sqlite = "2.6.2"
 room = "2.8.4"
 datastore = "1.2.0"
 material = "1.10.0"
 koin = "4.1.1"
-ktor = "3.3.3"
+ktor = "3.4.0"
 coil3 = "3.3.0"
 napier = "2.7.1"
-kotlinxSerializationJson = "1.9.0"
+kotlinxSerializationJson = "1.10.0"
 kotlinxDateTime = "0.7.1"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "material" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "cmp" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "cmp" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "cmp" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "cmp" }
+compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "cmp" }
+compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "cmp" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -35,7 +39,6 @@ firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore"}
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime"}
@@ -58,11 +61,10 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "cmp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }

@@ -8,8 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,8 +20,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.label_search
+import assemblepc.shared.generated.resources.search
 import assemblepc.shared.generated.resources.search_description
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun DeviceSearchText(
@@ -47,7 +47,7 @@ fun DeviceSearchText(
             label = {
                 Row {
                     Icon(
-                        imageVector = Icons.Default.Search,
+                        imageVector = vectorResource(Res.drawable.search),
                         contentDescription = stringResource(Res.string.search_description),
                     )
                     if (!hasFocusOrText) {

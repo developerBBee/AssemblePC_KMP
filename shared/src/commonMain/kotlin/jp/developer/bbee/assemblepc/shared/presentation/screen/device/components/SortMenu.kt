@@ -14,9 +14,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,13 +22,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import assemblepc.shared.generated.resources.Res
+import assemblepc.shared.generated.resources.check
+import assemblepc.shared.generated.resources.more_vert
 import assemblepc.shared.generated.resources.selected_icon_description
 import assemblepc.shared.generated.resources.sort_menu_button_description
 import jp.developer.bbee.assemblepc.shared.presentation.common.BaseBGPreview
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun SortMenu(
@@ -49,7 +49,7 @@ fun SortMenu(
             onClick = { isExpanded = true },
         ) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
+                imageVector = vectorResource(Res.drawable.more_vert),
                 contentDescription = stringResource(Res.string.sort_menu_button_description),
                 modifier = Modifier
                     .fillMaxHeight()
@@ -99,7 +99,7 @@ private fun SortItemRow(
         ) {
             if (isSelected) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    imageVector = vectorResource(Res.drawable.check),
                     contentDescription = stringResource(Res.string.selected_icon_description),
                     modifier = Modifier.width(24.dp).padding(end = 2.dp),
                 )

@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.item_image_description
@@ -32,7 +33,6 @@ import jp.developer.bbee.assemblepc.shared.presentation.common.BaseBGPreview
 import jp.developer.bbee.assemblepc.shared.presentation.components.MultipleTotalPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DeviceRow(
