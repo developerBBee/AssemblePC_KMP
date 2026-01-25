@@ -3,11 +3,9 @@
 package jp.developer.bbee.assemblepc.shared.data.room.model.converter
 
 import jp.developer.bbee.assemblepc.shared.common.toTokyoInstant
-import jp.developer.bbee.assemblepc.shared.data.room.model.Device as DataDevice
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
-import kotlinx.datetime.LocalDateTime
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import jp.developer.bbee.assemblepc.shared.data.room.model.Device as DataDevice
 
 object DeviceConverter {
     fun Device.toData(): DataDevice = DataDevice(
