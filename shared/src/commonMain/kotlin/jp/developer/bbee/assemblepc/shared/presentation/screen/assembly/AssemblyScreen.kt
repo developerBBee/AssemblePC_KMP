@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import jp.developer.bbee.assemblepc.shared.domain.model.CompositionItem
+import jp.developer.bbee.assemblepc.shared.presentation.common.LaunchedEffectUnitWithLog
 import jp.developer.bbee.assemblepc.shared.presentation.components.AssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.assembly.components.AssemblyRow
 import org.koin.compose.viewmodel.koinViewModel
@@ -21,9 +22,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AssemblyScreen(
     assemblyViewModel: AssemblyViewModel = koinViewModel(),
 ){
-
     val uiState by assemblyViewModel.uiState.collectAsStateWithLifecycle()
     val dialogUiState by assemblyViewModel.dialogUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffectUnitWithLog(tag = "AssemblyScreen")
 
     when (val state = uiState) {
         is AssemblyUiState.Loading -> {

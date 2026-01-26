@@ -1,51 +1,48 @@
 package jp.developer.bbee.assemblepc.shared.presentation.screen.device
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import jp.developer.bbee.assemblepc.shared.common.Constants.KANA_HALF_TO_FULL
 import jp.developer.bbee.assemblepc.shared.common.AppResponse
+import jp.developer.bbee.assemblepc.shared.common.Constants.KANA_HALF_TO_FULL
 import jp.developer.bbee.assemblepc.shared.domain.model.Assembly
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
+import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.domain.model.MAX_PRICE
 import jp.developer.bbee.assemblepc.shared.domain.model.ZERO_PRICE
-import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.domain.use_case.AddAssemblyUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.DeleteAssemblyUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetCurrentCompositionUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetCurrentDeviceTypeUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetDeviceUseCase
+import jp.developer.bbee.assemblepc.shared.presentation.common.BaseViewModel
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.SortType
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlin.time.ExperimentalTime
+import kotlinx.coroutines.plus
 
 class DeviceViewModel(
     getCurrentCompositionUseCase: GetCurrentCompositionUseCase,
-    getCurrentDeviceTypeUseCase: GetCurrentDeviceTypeUseCase,
+    private val getCurrentDeviceTypeUseCase: GetCurrentDeviceTypeUseCase,
     private val getDeviceUseCase: GetDeviceUseCase,
     private val addAssemblyUseCase: AddAssemblyUseCase,
     private val deleteAssemblyUseCase: DeleteAssemblyUseCase,
-) : ViewModel() {
+) : BaseViewModel() {
     private val handler = CoroutineExceptionHandler { _, ex -> handleError(ex) }
 
     private val compositionFlow = MutableStateFlow<Composition?>(null)
-    private val devicesFlow = MutableStateFlow<List<Device>>(emptyList())
 
     private val _uiState = MutableStateFlow<DeviceUiState>(DeviceUiState.Loading)
     val uiState: StateFlow<DeviceUiState> = _uiState.asStateFlow()
@@ -56,11 +53,10 @@ class DeviceViewModel(
     private val _navigationSideEffect = MutableSharedFlow<Unit>()
     val navigationSideEffect: Flow<Unit> = _navigationSideEffect.asSharedFlow()
 
-    private var uiJob : Job? = null
     private var deviceJob: Job? = null
 
     init {
-        uiJob = getCurrentCompositionUseCase()
+        getCurrentCompositionUseCase()
             .onEach { composition ->
                 if (composition == null) {
                     _uiState.value = DeviceUiState.Error(error = "構成が設定されていません")
@@ -73,45 +69,37 @@ class DeviceViewModel(
                     }
                 }
             }
-            .catch { handleError(it) }
-            .launchIn(viewModelScope)
+            .launchIn(viewModelScope + handler)
 
         compositionFlow
             .filterNotNull()
-            .map { getCurrentDeviceTypeUseCase().first() }
-            .onEach { getDeviceList(it) }
-            .take(1)
-            .catch { handleError(it) }
-            .launchIn(viewModelScope)
+            .onEach { observeDevice() }
+            .launchIn(viewModelScope + handler)
     }
 
-    private fun getDeviceList(deviceType: DeviceType) {
-        if (uiState.value is DeviceUiState.Error) return
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeDevice() {
+        deviceJob?.cancel()
+        deviceJob = getCurrentDeviceTypeUseCase()
+            .flatMapLatest { deviceType -> getDeviceUseCase(deviceType) }
+            .onEach { response ->
+                _uiState.value = when (response) {
+                    is AppResponse.Loading -> DeviceUiState.Loading
 
-        deviceJob = getDeviceUseCase(deviceType).onEach {
-            when (it) {
-                is AppResponse.Loading -> {
-                    _uiState.value = DeviceUiState.Loading
-                }
+                    is AppResponse.Success -> {
+                        val deviceList = response.data ?: emptyList()
 
-                is AppResponse.Success -> {
-                    val deviceList = it.data ?: emptyList()
+                        DeviceUiState.Success(
+                            deviceType = deviceList.first().deviceType,
+                            devices = deviceList,
+                            composition = compositionFlow.filterNotNull().first(),
+                        )
+                    }
 
-                    devicesFlow.value = deviceList
-                    _uiState.value = DeviceUiState.Success(
-                        deviceType = deviceType,
-                        devices = deviceList,
-                        composition = compositionFlow.filterNotNull().first(),
-                    )
-                }
-
-                is AppResponse.Failure -> {
-                    _uiState.value = DeviceUiState.Error(it.error)
+                    is AppResponse.Failure -> DeviceUiState.Error(response.error)
                 }
             }
-        }
-            .catch { handleError(it) }
-            .launchIn(viewModelScope)
+            .launchIn(viewModelScope + handler)
     }
 
     fun changeSortType(sort: SortType) {
@@ -150,8 +138,11 @@ class DeviceViewModel(
         _dialogUiState.value = null
     }
 
-    @OptIn(ExperimentalTime::class)
-    fun addAssembly(device: Device, quantity: Int = 1, isEdit: Boolean) {
+    fun addAssembly(
+        device: Device,
+        quantity: Int,
+        isEdit: Boolean,
+    ) {
         clearDialog()
 
         val state = uiState.value as? DeviceUiState.Success ?: return
@@ -161,7 +152,7 @@ class DeviceViewModel(
                 assemblyId = state.composition.assemblyId,
                 assemblyName = state.composition.assemblyName,
                 deviceId = device.id,
-                deviceType = device.device,
+                deviceType = device.deviceType,
                 deviceName = device.name,
                 deviceImgUrl = device.imgUrl,
                 deviceDetail = device.detail,
@@ -176,7 +167,6 @@ class DeviceViewModel(
                 addAssemblyUseCase(assemblies)
             } else {
                 // 新規追加は画面遷移する
-                stopAllJob()
                 addAssemblyUseCase(assemblies)
                 _navigationSideEffect.emit(Unit)
             }
@@ -192,14 +182,9 @@ class DeviceViewModel(
             deleteAssemblyUseCase(
                 assemblyId = state.composition.assemblyId,
                 deviceId = device.id,
-                quantity = quantity
+                quantity = quantity,
             )
         }
-    }
-
-    private suspend fun stopAllJob() {
-        uiJob?.cancelAndJoin()
-        deviceJob?.cancelAndJoin()
     }
 
     private fun handleError(error: Throwable) {

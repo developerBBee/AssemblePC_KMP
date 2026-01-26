@@ -3,9 +3,7 @@ package jp.developer.bbee.assemblepc.shared.domain.use_case
 import jp.developer.bbee.assemblepc.shared.domain.repository.CurrentCompositionRepository
 import jp.developer.bbee.assemblepc.shared.domain.repository.DeviceRepository
 import kotlinx.coroutines.flow.first
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class RenameAssemblyUseCase(
     private val deviceRepository: DeviceRepository,
     private val currentRepository: CurrentCompositionRepository,

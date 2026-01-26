@@ -1,19 +1,18 @@
 package jp.developer.bbee.assemblepc.shared.domain.model
 
 import jp.developer.bbee.assemblepc.shared.common.now
+import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.domain.model.serializer.InstantTokyoSerializer
 import kotlinx.serialization.Serializable
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-@OptIn(ExperimentalTime::class)
 @Serializable
 data class Assembly(
     val id: Int = 0,
     val assemblyId: Int,
     val assemblyName: String,
     val deviceId: String,
-    val deviceType: String,
+    val deviceType: DeviceType,
     val deviceName : String,
     val deviceImgUrl: String,
     val deviceDetail: String,

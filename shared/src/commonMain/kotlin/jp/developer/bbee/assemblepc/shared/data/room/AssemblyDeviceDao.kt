@@ -1,9 +1,14 @@
 package jp.developer.bbee.assemblepc.shared.data.room
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import jp.developer.bbee.assemblepc.shared.data.room.model.Assembly
 import jp.developer.bbee.assemblepc.shared.data.room.model.Device
 import jp.developer.bbee.assemblepc.shared.data.room.model.DeviceUpdate
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AssemblyDeviceDao {
@@ -18,10 +23,10 @@ interface AssemblyDeviceDao {
     suspend fun insertDevices(devices: List<Device>)
 
     @Query("SELECT * FROM Device WHERE device = :device")
-    suspend fun loadDevice(device: String): List<Device>
+    fun loadDevice(device: String): Flow<List<Device>>
 
     @Query("SELECT * FROM Device WHERE id IN (:ids)")
-    suspend fun loadDeviceByIds(ids: List<String>): List<Device>
+    fun loadDeviceByIds(ids: List<String>): Flow<List<Device>>
 
     /**
      * Assembly Table CRUD
@@ -30,10 +35,10 @@ interface AssemblyDeviceDao {
     suspend fun insertAssemblies(assemblies: List<Assembly>)
 
     @Query("SELECT * FROM Assembly WHERE assemblyId = :assemblyId")
-    suspend fun loadAssembly(assemblyId: Int): List<Assembly>
+    fun loadAssembly(assemblyId: Int): Flow<List<Assembly>>
 
     @Query("SELECT * FROM Assembly ORDER BY assemblyId DESC")
-    suspend fun loadAllAssembly(): List<Assembly>
+    fun loadAllAssembly(): Flow<List<Assembly>>
 
     @Delete
     suspend fun deleteAssembly(assemblies: List<Assembly>)
@@ -45,34 +50,7 @@ interface AssemblyDeviceDao {
     suspend fun renameAssemblyById(assemblyName: String, assemblyId: Int)
 
     @Query("SELECT MAX(assemblyId) FROM Assembly")
-    suspend fun loadMaxAssemblyId(): Int?
-
-    /**
-     * AssemblyDevice Join
-     */
-    @Query(
-        """
-            SELECT
-                Assembly.id,
-                Assembly.assemblyId,
-                Assembly.assemblyName,
-                Assembly.deviceId,
-                Assembly.deviceType,
-                Assembly.deviceName,
-                Assembly.deviceImgUrl,
-                Device.detail AS deviceDetail,
-                Assembly.devicePriceSaved,
-                Device.price AS devicePriceRecent,
-                Assembly.reviewText,
-                Assembly.reviewTime,
-                Assembly.updatedAt
-            FROM Assembly
-            INNER JOIN Device
-            ON Assembly.deviceId = Device.id
-            WHERE assemblyId = :assemblyId
-        """
-    )
-    suspend fun loadAssemblyNewPrice(assemblyId: Int): List<Assembly>
+    fun loadMaxAssemblyId(): Flow<Int?>
 
     @Query("UPDATE Assembly SET reviewText = :reviewText, reviewTime = :reviewTime" +
             " WHERE assemblyId = :assemblyId ")
@@ -85,9 +63,5 @@ interface AssemblyDeviceDao {
     suspend fun insertDeviceUpdate(deviceUpdate: DeviceUpdate)
 
     @Query("SELECT * FROM DeviceUpdate WHERE device = :device")
-    suspend fun loadDeviceUpdate(device: String): List<DeviceUpdate>
-
-    // 存在チェック 0:存在しない >0:存在する
-    @Query("SELECT COUNT(*) FROM DeviceUpdate WHERE device = :device")
-    suspend fun existDeviceUpdate(device: String): Int
+    fun loadDeviceUpdate(device: String): Flow<List<DeviceUpdate>>
 }

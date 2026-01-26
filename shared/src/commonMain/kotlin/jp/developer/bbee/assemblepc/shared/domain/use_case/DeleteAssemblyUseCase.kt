@@ -1,6 +1,7 @@
 package jp.developer.bbee.assemblepc.shared.domain.use_case
 
 import jp.developer.bbee.assemblepc.shared.domain.repository.DeviceRepository
+import kotlinx.coroutines.flow.first
 
 class DeleteAssemblyUseCase(
     private val deviceRepository: DeviceRepository,
@@ -11,7 +12,7 @@ class DeleteAssemblyUseCase(
         deviceId: String,
         quantity: Int,
     ) {
-        val assemblies = deviceRepository.loadAssembly(assemblyId)
+        val assemblies = deviceRepository.loadAssembly(assemblyId).first()
             .filter { it.deviceId == deviceId }
             .take(quantity)
         if (assemblies.isEmpty()) return

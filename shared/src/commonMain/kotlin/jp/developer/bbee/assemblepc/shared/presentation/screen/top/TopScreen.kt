@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package jp.developer.bbee.assemblepc.shared.presentation.screen.top
 
 import androidx.compose.foundation.Image
@@ -17,7 +15,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,10 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.alternative_error_message
-import assemblepc.shared.generated.resources.deleted_message
+import assemblepc.shared.generated.resources.app_symbol_description
 import assemblepc.shared.generated.resources.ic_launcher_foreground
 import assemblepc.shared.generated.resources.start_assembly
 import assemblepc.shared.generated.resources.start_assembly_guide
@@ -41,46 +37,36 @@ import jp.developer.bbee.assemblepc.shared.common.now
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
 import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
-import jp.developer.bbee.assemblepc.shared.presentation.navigateSingle
+import jp.developer.bbee.assemblepc.shared.presentation.common.LaunchedEffectUnitWithLog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.AssemblyReviewDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.AssemblyThumbnail
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.CreateAssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.DeleteAssemblyConfirmDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.EditAssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.RenameAssemblyConfirmDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Composable
 fun TopScreen(
-    navController: NavController,
-    scope: CoroutineScope,
+    onNavigate: (ScreenRoute) -> Unit,
     current: Instant = now(),
     topViewModel: TopViewModel = koinViewModel(),
 ) {
     val uiState by topViewModel.uiState.collectAsStateWithLifecycle()
     val dialogUiState by topViewModel.dialogUiState.collectAsStateWithLifecycle()
 
-    DisposableEffect(Unit) {
-        val job = scope.launch {
-            topViewModel.navFlow.collect { sideEffect ->
-                val route = when (sideEffect) {
-                    TopSideEffect.NEW_CREATION,
-                    TopSideEffect.ADD_PARTS -> ScreenRoute.SelectionScreen
+    LaunchedEffectUnitWithLog(tag = "TopScreen") {
+        topViewModel.navFlow.collect { sideEffect ->
+            val route = when (sideEffect) {
+                TopSideEffect.NEW_CREATION,
+                TopSideEffect.ADD_PARTS -> ScreenRoute.SelectionScreen
 
-                    TopSideEffect.SHOW_COMPOSITION -> ScreenRoute.AssemblyScreen
-                }
-                navController.navigateSingle(route)
+                TopSideEffect.SHOW_COMPOSITION -> ScreenRoute.AssemblyScreen
             }
-        }
-
-        onDispose {
-            job.cancel()
+            onNavigate(route)
         }
     }
 
@@ -88,7 +74,7 @@ fun TopScreen(
         TopUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
@@ -100,14 +86,14 @@ fun TopScreen(
                 current = current,
                 onCompositionClick = topViewModel::selectComposition,
                 onCompositionReviewClick = topViewModel::showReviewDialog,
-                onStartButtonClick = { topViewModel.showCreateDialog() }
+                onStartButtonClick = { topViewModel.showCreateDialog() },
             )
         }
 
         is TopUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = state.error ?: stringResource(Res.string.alternative_error_message))
             }
@@ -118,7 +104,7 @@ fun TopScreen(
         is TopDialogUiState.ShowCreate -> {
             CreateAssemblyDialog(
                 onDismiss = { topViewModel.clearDialog() },
-                onCreationStart = { name -> topViewModel.createNewComposition(name) }
+                onCreationStart = { name -> topViewModel.createNewComposition(name) },
             )
         }
 
@@ -130,7 +116,7 @@ fun TopScreen(
                 onAddParts = { topViewModel.addParts(composition) },
                 onShowComposition = { topViewModel.showComposition(composition) },
                 onRenameClick = { newName -> topViewModel.showRenameConfirm(composition, newName) },
-                onDeleteClick = { topViewModel.showDeleteConfirm(composition) }
+                onDeleteClick = { topViewModel.showDeleteConfirm(composition) },
             )
         }
 
@@ -142,21 +128,15 @@ fun TopScreen(
                 selectedName = selectedName,
                 newName = newName,
                 onDismiss = topViewModel::clearDialog,
-                onConfirm = { topViewModel.renameAssembly(newName, assemblyId) }
+                onConfirm = { topViewModel.renameAssembly(newName, assemblyId) },
             )
         }
 
         is TopDialogUiState.ShowDeleteConfirm -> {
-            val selectedName = state.compo.assemblyName
-            val deletedMessage = stringResource(Res.string.deleted_message, selectedName)
             DeleteAssemblyConfirmDialog(
-                selectedName = selectedName,
+                selectedName = state.compo.assemblyName,
                 onDismiss = topViewModel::clearDialog,
-                onConfirm = {
-                    topViewModel.deleteAssembly(state.compo.assemblyId) {
-                        // TODO Something to replace Toast
-                    }
-                }
+                onConfirm = { topViewModel.deleteAssembly(state.compo.assemblyId) },
             )
         }
 
@@ -187,7 +167,7 @@ private fun TopScreenContent(
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
                     modifier = Modifier
@@ -195,7 +175,7 @@ private fun TopScreenContent(
                         .height(0.dp)
                         .weight(3f),
                     painter = painterResource(Res.drawable.ic_launcher_foreground),
-                    contentDescription = null
+                    contentDescription = stringResource(Res.string.app_symbol_description),
                 )
                 Spacer(modifier = Modifier.height(0.dp).weight(1f))
                 Text(
@@ -203,7 +183,7 @@ private fun TopScreenContent(
                     textAlign = TextAlign.Center,
                     text = stringResource(Res.string.start_assembly_guide),
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(0.dp).weight(1f))
             }

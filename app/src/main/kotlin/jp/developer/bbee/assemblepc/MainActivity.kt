@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
             AssemblePCApp(
                 modifier = Modifier
                     .padding(WindowInsets.systemBars.asPaddingValues())
-//                    .semantics { testTagsAsResourceId = Constants.DEBUG }
             )
         }
     }

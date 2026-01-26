@@ -16,7 +16,7 @@ class CurrentDeviceTypeRepositoryImpl(
 
     override val currentDeviceTypeFlow: Flow<DeviceType> = dataStore.data
         .map { prefs ->
-            prefs[KEY_CURRENT_DEVICE_TYPE]?.let { DeviceType.from(it) } ?: DeviceType.PC_CASE
+            prefs[KEY_CURRENT_DEVICE_TYPE]?.let(DeviceType::from) ?: DeviceType.PC_CASE
         }
         .catch { _ ->
             clearCurrentDeviceType()

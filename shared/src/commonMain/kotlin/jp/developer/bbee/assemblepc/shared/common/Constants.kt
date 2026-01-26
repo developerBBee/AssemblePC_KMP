@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package jp.developer.bbee.assemblepc.shared.common
 
 import jp.developer.bbee.assemblepc.shared.domain.model.Assembly
@@ -7,7 +5,6 @@ import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.domain.model.toPrice
-import kotlin.time.ExperimentalTime
 
 object Constants {
     const val IS_DEBUG: Boolean = true
@@ -107,7 +104,7 @@ object Constants {
 
     val DEVICE_SAMPLE: Device = Device(
         id = "1",
-        device = DeviceType.MEMORY.key,
+        deviceType = DeviceType.MEMORY,
         name = "DDR4-3200 16GB x2",
         imgUrl = "https://example.com/pc_case.jpg",
         url = "https://example.com/pc_case",
@@ -127,7 +124,7 @@ object Constants {
         assemblyId = 1,
         assemblyName = "サンプル構成",
         deviceId = DEVICE_SAMPLE.id,
-        deviceType = DEVICE_SAMPLE.device,
+        deviceType = DEVICE_SAMPLE.deviceType,
         deviceName = DEVICE_SAMPLE.name,
         deviceImgUrl = DEVICE_SAMPLE.imgUrl,
         deviceDetail = DEVICE_SAMPLE.detail,

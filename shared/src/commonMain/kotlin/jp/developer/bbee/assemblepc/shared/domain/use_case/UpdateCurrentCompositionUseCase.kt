@@ -4,9 +4,7 @@ import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.domain.repository.CurrentCompositionRepository
 import jp.developer.bbee.assemblepc.shared.domain.repository.DeviceRepository
 import kotlinx.coroutines.flow.first
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class UpdateCurrentCompositionUseCase(
     private val deviceRepository: DeviceRepository,
     private val currentRepository: CurrentCompositionRepository
@@ -16,7 +14,7 @@ class UpdateCurrentCompositionUseCase(
         val composition = currentRepository.currentCompositionFlow.first()
 
         if (composition?.assemblyId == assemblyId) {
-            val allAssemblies = deviceRepository.loadAssembly(assemblyId)
+            val allAssemblies = deviceRepository.loadAssembly(assemblyId).first()
 
             if (allAssemblies.isEmpty()) {
                 if (deleteIfEmpty) {
@@ -28,7 +26,7 @@ class UpdateCurrentCompositionUseCase(
                 }
             } else {
                 val deviceIdList = allAssemblies.map { it.deviceId }
-                val devices = deviceRepository.loadDeviceByIds(deviceIdList)
+                val devices = deviceRepository.loadDeviceByIds(deviceIdList).first()
                 val firstAssembly = allAssemblies.first()
 
                 currentRepository.saveCurrentComposition(
