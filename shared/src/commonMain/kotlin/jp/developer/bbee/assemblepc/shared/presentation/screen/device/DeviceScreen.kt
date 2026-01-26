@@ -14,7 +14,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.label_device_selected
 import assemblepc.shared.generated.resources.network_error_message
@@ -32,30 +31,22 @@ import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
 import jp.developer.bbee.assemblepc.shared.common.Constants
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
-import jp.developer.bbee.assemblepc.shared.presentation.navigateSingle
 import jp.developer.bbee.assemblepc.shared.presentation.components.AssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.DeviceRow
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.DeviceSearchText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun DeviceScreen(
-    navController: NavController,
-    scope: CoroutineScope,
+    onNavigate: (ScreenRoute) -> Unit,
     deviceViewModel: DeviceViewModel = koinViewModel(),
 ) {
 
-    DisposableEffect(Unit) {
-        val job = scope.launch {
-            deviceViewModel.navigationSideEffect.collect {
-                navController.navigateSingle(ScreenRoute.AssemblyScreen)
-            }
+    LaunchedEffect(Unit) {
+        deviceViewModel.navigationSideEffect.collect {
+            onNavigate(ScreenRoute.AssemblyScreen)
         }
-
-        onDispose { job.cancel() }
     }
     val uiState by deviceViewModel.uiState.collectAsStateWithLifecycle()
     val dialogUiState by deviceViewModel.dialogUiState.collectAsStateWithLifecycle()

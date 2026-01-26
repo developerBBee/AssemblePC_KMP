@@ -29,16 +29,15 @@ fun BaseLayout(
         bottomBar = {
             BottomNavBar(
                 currentRoute = currentRoute,
-                composition = composition,
-                navigateTo = navigateTo
+                enabled = composition != null,
+                navigateTo = navigateTo,
             )
         }
     ) { innerPadding ->
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier
-                .padding(paddingValues = innerPadding),
-            color = MaterialTheme.colors.background
+            modifier = Modifier.padding(paddingValues = innerPadding),
+            color = MaterialTheme.colors.background,
         ) {
             content()
         }

@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.navigation_icon_description
-import jp.developer.bbee.assemblepc.shared.common.Constants
-import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.presentation.ROUTE_LIST
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
 import jp.developer.bbee.assemblepc.shared.presentation.theme.AssemblePCTheme
@@ -23,7 +21,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BottomNavBar(
     currentRoute: ScreenRoute?,
-    composition: Composition?,
+    enabled: Boolean,
     navigateTo: (ScreenRoute) -> Unit,
 ) {
     BottomNavigation(
@@ -32,7 +30,6 @@ fun BottomNavBar(
     ) {
         ROUTE_LIST.forEach { screenRoute ->
             BottomNavigationItem(
-                modifier = Modifier,//.testTag(screenRoute.javaClass.simpleName),
                 icon = {
                     Icon(
                         imageVector = screenRoute.getIcon(),
@@ -41,14 +38,10 @@ fun BottomNavBar(
                 },
                 label = { Text(text = screenRoute.name()) },
                 selected = currentRoute == screenRoute,
-                // TopScreenの場合は他のアイコン色を無効色にする
-                unselectedContentColor = if (currentRoute == ScreenRoute.TopScreen) {
-                    LocalContentColor.current.copy(alpha = ContentAlpha.disabled)
-                } else {
-                    LocalContentColor.current.copy(alpha = ContentAlpha.high)
-                },
+                unselectedContentColor = LocalContentColor.current
+                    .copy(alpha = if (enabled) ContentAlpha.high else ContentAlpha.disabled),
                 selectedContentColor = MaterialTheme.colors.primary,
-                enabled = composition != null,
+                enabled = enabled,
                 onClick = {
                     currentRoute?.let { currentRoute ->
                         // 現在の画面のルートと異なる場合のみ遷移する
@@ -68,7 +61,7 @@ private fun BottomNavBarPreview() {
     AssemblePCTheme {
         BottomNavBar(
             currentRoute = ScreenRoute.TopScreen,
-            composition = Constants.COMPOSITION_SAMPLE,
+            enabled = true,
             navigateTo = {}
         )
     }

@@ -50,7 +50,7 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
 
-            implementation(libs.compose.navigation)
+            implementation(libs.navigation3.ui)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

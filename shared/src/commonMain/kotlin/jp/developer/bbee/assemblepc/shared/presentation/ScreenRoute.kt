@@ -1,12 +1,12 @@
 package jp.developer.bbee.assemblepc.shared.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.navOptions
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.assembly_screen
 import assemblepc.shared.generated.resources.build
@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Serializable
-sealed interface ScreenRoute {
+sealed interface ScreenRoute : NavKey {
     @Serializable
     data object TopScreen : ScreenRoute
 
@@ -62,25 +62,25 @@ val ROUTE_LIST: List<ScreenRoute> = listOf(
     AssemblyScreen,
 )
 
-//fun NavBackStackEntry.toScreenRoute(): ScreenRoute? {
-//    return ROUTE_LIST.firstOrNull { destination.hasRoute(it::class) }
-//}
+fun MutableList<ScreenRoute>.navigateSingle(route: ScreenRoute) {
+    removeAll { it == route }
+    add(route)
+}
 
-fun NavBackStackEntry.toScreenRoute(): ScreenRoute? {
-    return when {
-        destination.hasRoute<TopScreen>() -> toRoute<TopScreen>()
-        destination.hasRoute<SelectionScreen>() -> toRoute<SelectionScreen>()
-        destination.hasRoute<DeviceScreen>() -> toRoute<DeviceScreen>()
-        destination.hasRoute<AssemblyScreen>() -> toRoute<AssemblyScreen>()
-        else -> null
+@Composable
+fun rememberNavBackStack(
+    startDestination: ScreenRoute = TopScreen
+): SnapshotStateList<ScreenRoute> {
+    return rememberSaveable(
+        saver = listSaver(
+            save = { list -> list.map { it.toIndex() } },
+            restore = { indices -> mutableStateListOf(*indices.map { it.toRoute() }.toTypedArray()) },
+        )
+    ) {
+        mutableStateListOf(startDestination)
     }
 }
 
-fun NavController.navigateSingle(screenRoute: ScreenRoute) {
-    popBackStack(screenRoute, true)
+private fun ScreenRoute.toIndex(): Int = ROUTE_LIST.indexOf(this)
 
-    val options = navOptions {
-        launchSingleTop = true
-    }
-    navigate(screenRoute, options)
-}
+private fun Int.toRoute(): ScreenRoute = ROUTE_LIST[this]

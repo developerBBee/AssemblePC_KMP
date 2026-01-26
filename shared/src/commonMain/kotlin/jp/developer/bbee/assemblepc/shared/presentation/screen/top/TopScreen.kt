@@ -17,7 +17,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.alternative_error_message
 import assemblepc.shared.generated.resources.deleted_message
@@ -41,15 +40,12 @@ import jp.developer.bbee.assemblepc.shared.common.now
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
 import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
-import jp.developer.bbee.assemblepc.shared.presentation.navigateSingle
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.AssemblyReviewDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.AssemblyThumbnail
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.CreateAssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.DeleteAssemblyConfirmDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.EditAssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.components.RenameAssemblyConfirmDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -58,29 +54,22 @@ import kotlin.time.Instant
 
 @Composable
 fun TopScreen(
-    navController: NavController,
-    scope: CoroutineScope,
+    onNavigate: (ScreenRoute) -> Unit,
     current: Instant = now(),
     topViewModel: TopViewModel = koinViewModel(),
 ) {
     val uiState by topViewModel.uiState.collectAsStateWithLifecycle()
     val dialogUiState by topViewModel.dialogUiState.collectAsStateWithLifecycle()
 
-    DisposableEffect(Unit) {
-        val job = scope.launch {
-            topViewModel.navFlow.collect { sideEffect ->
-                val route = when (sideEffect) {
-                    TopSideEffect.NEW_CREATION,
-                    TopSideEffect.ADD_PARTS -> ScreenRoute.SelectionScreen
+    LaunchedEffect(Unit) {
+        topViewModel.navFlow.collect { sideEffect ->
+            val route = when (sideEffect) {
+                TopSideEffect.NEW_CREATION,
+                TopSideEffect.ADD_PARTS -> ScreenRoute.SelectionScreen
 
-                    TopSideEffect.SHOW_COMPOSITION -> ScreenRoute.AssemblyScreen
-                }
-                navController.navigateSingle(route)
+                TopSideEffect.SHOW_COMPOSITION -> ScreenRoute.AssemblyScreen
             }
-        }
-
-        onDispose {
-            job.cancel()
+            onNavigate(route)
         }
     }
 

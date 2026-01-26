@@ -3,13 +3,10 @@ package jp.developer.bbee.assemblepc.shared.presentation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import jp.developer.bbee.assemblepc.shared.presentation.common.BaseLayout
 import jp.developer.bbee.assemblepc.shared.presentation.screen.assembly.AssemblyScreen
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.DeviceScreen
@@ -25,52 +22,48 @@ fun AssemblePCApp(
     modifier: Modifier = Modifier,
     viewModel: AppViewModel = koinViewModel(),
 ) {
-    val scope = rememberCoroutineScope()
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val composition = (uiState as? AppUiState.Selected)?.composition
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute: ScreenRoute? = backStackEntry?.toScreenRoute()
+    val currentRoute: ScreenRoute? = backStack.lastOrNull()
 
     AssemblePCTheme {
         BaseLayout(
             modifier = modifier,
             currentRoute = currentRoute,
             composition = composition,
-            navigateTo = { route -> navController.navigateSingle(route) }
+            navigateTo = { route -> backStack.navigateSingle(route) }
         ) {
-            NavHost(
-                navController = navController,
-                startDestination = ScreenRoute.TopScreen,
+            NavDisplay(
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
                 modifier = Modifier.fillMaxSize(),
-            ) {
-                composable<ScreenRoute.TopScreen> {
-                    TopScreen(
-                        navController = navController,
-                        scope = scope
-                    )
-                }
+                entryProvider = entryProvider {
+                    entry<ScreenRoute.TopScreen> {
+                        TopScreen(
+                            onNavigate = { route -> backStack.navigateSingle(route) }
+                        )
+                    }
 
-                composable<ScreenRoute.SelectionScreen> {
-                    SelectionScreen(
-                        navController = navController,
-                        scope = scope
-                    )
-                }
+                    entry<ScreenRoute.SelectionScreen> {
+                        SelectionScreen(
+                            onNavigate = { route -> backStack.navigateSingle(route) }
+                        )
+                    }
 
-                composable<ScreenRoute.DeviceScreen> {
-                    DeviceScreen(
-                        navController = navController,
-                        scope = scope
-                    )
-                }
+                    entry<ScreenRoute.DeviceScreen> {
+                        DeviceScreen(
+                            onNavigate = { route -> backStack.navigateSingle(route) }
+                        )
+                    }
 
-                composable<ScreenRoute.AssemblyScreen> {
-                    AssemblyScreen()
+                    entry<ScreenRoute.AssemblyScreen> {
+                        AssemblyScreen()
+                    }
                 }
-            }
+            )
         }
     }
 }
