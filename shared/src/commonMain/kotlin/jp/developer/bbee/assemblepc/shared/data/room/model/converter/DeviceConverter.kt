@@ -1,16 +1,14 @@
-@file:OptIn(ExperimentalTime::class)
-
 package jp.developer.bbee.assemblepc.shared.data.room.model.converter
 
 import jp.developer.bbee.assemblepc.shared.common.toTokyoInstant
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
-import kotlin.time.ExperimentalTime
+import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.data.room.model.Device as DataDevice
 
 object DeviceConverter {
     fun Device.toData(): DataDevice = DataDevice(
         id = id,
-        device = device,
+        device = deviceType.key,
         name = name,
         imgurl = imgUrl,
         url = url,
@@ -29,7 +27,7 @@ object DeviceConverter {
 
     private fun DataDevice.toDomain(): Device = Device(
         id = id,
-        device = device,
+        deviceType = DeviceType.from(key = device),
         name = name,
         imgUrl = imgurl,
         url = url,

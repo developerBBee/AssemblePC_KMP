@@ -53,7 +53,6 @@ import jp.developer.bbee.assemblepc.shared.presentation.components.MultipleTotal
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.ExperimentalTime
 
 @Composable
 fun AssemblyRow(
@@ -162,7 +161,6 @@ private fun AssemblyRowPreview(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalTime::class)
 @Preview
 @Composable
 private fun MultiAssemblyRowPreview(modifier: Modifier = Modifier) {

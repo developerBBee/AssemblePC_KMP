@@ -1,5 +1,7 @@
 package jp.developer.bbee.assemblepc.shared.di
 
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import jp.developer.bbee.assemblepc.shared.data.remote.AssemblePcApi
 import jp.developer.bbee.assemblepc.shared.data.remote.AssemblePcApiImpl
 import jp.developer.bbee.assemblepc.shared.data.repository.CurrentCompositionRepositoryImpl
@@ -17,7 +19,6 @@ import jp.developer.bbee.assemblepc.shared.domain.use_case.ClearCurrentCompositi
 import jp.developer.bbee.assemblepc.shared.domain.use_case.ClearCurrentDeviceTypeUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.DeleteAssemblyUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.DeleteCompositionUseCase
-import jp.developer.bbee.assemblepc.shared.domain.use_case.GetAssemblyUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetCompositionsUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetCurrentCompositionUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.GetCurrentDeviceTypeUseCase
@@ -34,8 +35,6 @@ import jp.developer.bbee.assemblepc.shared.presentation.screen.assembly.Assembly
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.DeviceViewModel
 import jp.developer.bbee.assemblepc.shared.presentation.screen.selection.SelectionViewModel
 import jp.developer.bbee.assemblepc.shared.presentation.screen.top.TopViewModel
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -62,7 +61,6 @@ private val sharedModule = module {
     singleOf(::ClearCurrentDeviceTypeUseCase)
     singleOf(::DeleteAssemblyUseCase)
     singleOf(::DeleteCompositionUseCase)
-    singleOf(::GetAssemblyUseCase)
     singleOf(::GetCompositionsUseCase)
     singleOf(::GetCurrentCompositionUseCase)
     singleOf(::GetCurrentDeviceTypeUseCase)

@@ -14,7 +14,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,10 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import assemblepc.shared.generated.resources.Res
 import assemblepc.shared.generated.resources.label_device_selected
 import assemblepc.shared.generated.resources.network_error_message
-import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
 import jp.developer.bbee.assemblepc.shared.common.Constants
 import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.presentation.ScreenRoute
+import jp.developer.bbee.assemblepc.shared.presentation.common.BasePreview
+import jp.developer.bbee.assemblepc.shared.presentation.common.LaunchedEffectUnitWithLog
 import jp.developer.bbee.assemblepc.shared.presentation.components.AssemblyDialog
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.DeviceRow
 import jp.developer.bbee.assemblepc.shared.presentation.screen.device.components.DeviceSearchText
@@ -42,14 +42,14 @@ fun DeviceScreen(
     onNavigate: (ScreenRoute) -> Unit,
     deviceViewModel: DeviceViewModel = koinViewModel(),
 ) {
+    val uiState by deviceViewModel.uiState.collectAsStateWithLifecycle()
+    val dialogUiState by deviceViewModel.dialogUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffectUnitWithLog(tag = "DeviceScreen") {
         deviceViewModel.navigationSideEffect.collect {
             onNavigate(ScreenRoute.AssemblyScreen)
         }
     }
-    val uiState by deviceViewModel.uiState.collectAsStateWithLifecycle()
-    val dialogUiState by deviceViewModel.dialogUiState.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {

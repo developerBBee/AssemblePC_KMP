@@ -5,7 +5,7 @@ import platform.CoreGraphics.CGRectGetWidth
 import platform.UIKit.UIScreen
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun getScreenWidthDp(): Int {
+internal actual fun getScreenWidthDp(): Int {
     val rect = UIScreen.mainScreen.bounds
     return CGRectGetWidth(rect).toInt()
 }

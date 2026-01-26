@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package jp.developer.bbee.assemblepc.shared.data.repository
 
 import jp.developer.bbee.assemblepc.shared.data.remote.AssemblePcApi
@@ -10,8 +8,6 @@ import jp.developer.bbee.assemblepc.shared.data.room.model.converter.AssemblyCon
 import jp.developer.bbee.assemblepc.shared.data.room.model.converter.DeviceConverter.toData
 import jp.developer.bbee.assemblepc.shared.data.room.model.converter.DeviceConverter.toDomain
 import jp.developer.bbee.assemblepc.shared.data.room.model.converter.DeviceUpdateConverter.toData
-import jp.developer.bbee.assemblepc.shared.data.room.model.converter.DeviceUpdateConverter.toDomain
-import jp.developer.bbee.assemblepc.shared.data.room.model.DeviceUpdate as DataDeviceUpdate
 import jp.developer.bbee.assemblepc.shared.domain.model.Assembly
 import jp.developer.bbee.assemblepc.shared.domain.model.AssemblyReview
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
@@ -19,7 +15,10 @@ import jp.developer.bbee.assemblepc.shared.domain.model.Device
 import jp.developer.bbee.assemblepc.shared.domain.model.DeviceUpdate
 import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import jp.developer.bbee.assemblepc.shared.domain.repository.DeviceRepository
-import kotlin.time.ExperimentalTime
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import jp.developer.bbee.assemblepc.shared.data.room.model.DeviceUpdate as DataDeviceUpdate
 
 class DeviceRepositoryImpl(
     private val api: AssemblePcApi,
@@ -55,7 +54,7 @@ class DeviceRepositoryImpl(
             apiUpdate = api.getLastUpdate().toIntUpdate()
         }
         if (storedUpdate[deviceType] == 0) {
-            val storedDeviceUpdates = assemblyDeviceDao.loadDeviceUpdate(deviceType.key)
+            val storedDeviceUpdates = assemblyDeviceDao.loadDeviceUpdate(deviceType.key).first()
             if (storedDeviceUpdates.isNotEmpty()) {
                 storedUpdate[deviceType] = storedDeviceUpdates.first().update
             }
@@ -67,34 +66,36 @@ class DeviceRepositoryImpl(
             assemblyDeviceDao.insertDeviceUpdate(deviceUpdate)
             return deviceList.toDomain()
         }
-        return assemblyDeviceDao.loadDevice(deviceType.key).toDomain()
+        return assemblyDeviceDao.loadDevice(deviceType.key).first().toDomain()
     }
 
-    override suspend fun loadAssembly(assemblyId: Int): List<Assembly> {
-        return assemblyDeviceDao.loadAssembly(assemblyId).toDomain()
+    override fun loadAssembly(assemblyId: Int): Flow<List<Assembly>> {
+        return assemblyDeviceDao.loadAssembly(assemblyId).map { it.toDomain() }
     }
 
-    override suspend fun loadCompositions(): List<Composition> {
-        val assemblies = assemblyDeviceDao.loadAllAssembly().toDomain()
-        val deviceIdList = assemblies.map { it.deviceId }
-        val devices = assemblyDeviceDao.loadDeviceByIds(deviceIdList).toDomain()
-
-        if (assemblies.isEmpty() || devices.isEmpty()) {
-            return emptyList()
-        }
-
-        return assemblies
-            .groupBy { it.assemblyId }
-            .map { (assemblyId, assemblyList) ->
-                val firstAssembly = assemblyList.first()
-                Composition.of(
-                    assemblyId = assemblyId,
-                    assemblyName = firstAssembly.assemblyName,
-                    reviewText = firstAssembly.reviewText,
-                    reviewTime = firstAssembly.reviewTime,
-                    assemblies = assemblyList,
-                    devices = devices
-                )
+    override fun loadCompositions(): Flow<List<Composition>> {
+        return assemblyDeviceDao.loadAllAssembly()
+            .map { assembliesData ->
+                val assemblies = assembliesData.toDomain()
+                val deviceIds = assemblies.map { it.deviceId }
+                val devices = assemblyDeviceDao.loadDeviceByIds(deviceIds).first().toDomain()
+                if (assemblies.isEmpty() || devices.isEmpty()) {
+                    emptyList()
+                } else {
+                    assemblies
+                        .groupBy { it.assemblyId }
+                        .map { (assemblyId, assemblyList) ->
+                            val firstAssembly = assemblyList.first()
+                            Composition.of(
+                                assemblyId = assemblyId,
+                                assemblyName = firstAssembly.assemblyName,
+                                reviewText = firstAssembly.reviewText,
+                                reviewTime = firstAssembly.reviewTime,
+                                assemblies = assemblyList,
+                                devices = devices
+                            )
+                        }
+                }
             }
     }
 
@@ -102,8 +103,7 @@ class DeviceRepositoryImpl(
         assemblyDeviceDao.insertAssemblies(assemblies.toData())
     }
 
-
-    override suspend fun loadMaxAssemblyId(): Int? {
+    override fun loadMaxAssemblyId(): Flow<Int?> {
         return assemblyDeviceDao.loadMaxAssemblyId()
     }
 
@@ -127,24 +127,12 @@ class DeviceRepositoryImpl(
         )
     }
 
-    override suspend fun existDeviceUpdate(device: String): Int {
-        return assemblyDeviceDao.existDeviceUpdate(device)
-    }
-
-    override suspend fun loadDeviceUpdate(device: String): List<DeviceUpdate> {
-        return assemblyDeviceDao.loadDeviceUpdate(device).toDomain()
-    }
-
     override suspend fun insertDeviceUpdate(deviceUpdate: DeviceUpdate) {
         assemblyDeviceDao.insertDeviceUpdate(deviceUpdate.toData())
     }
 
-    override suspend fun loadDevice(device: String): List<Device> {
-        return assemblyDeviceDao.loadDevice(device).toDomain()
-    }
-
-    override suspend fun loadDeviceByIds(deviceIds: List<String>): List<Device> {
-        return assemblyDeviceDao.loadDeviceByIds(deviceIds).toDomain()
+    override fun loadDeviceByIds(deviceIds: List<String>): Flow<List<Device>> {
+        return assemblyDeviceDao.loadDeviceByIds(deviceIds).map { it.toDomain() }
     }
 
     override suspend fun insertDevice(device: Device) {

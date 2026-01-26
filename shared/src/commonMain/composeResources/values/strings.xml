@@ -83,6 +83,7 @@
     <string name="plus_button_description">プラスボタン</string>
     <string name="sort_menu_button_description">ソートメニューボタン</string>
     <string name="selected_icon_description">選択アイコン</string>
+    <string name="app_symbol_description">アプリシンボル</string>
 
     <!-- AI構成レビュー -->
     <string name="ai_review_title">AIによる構成レビュー</string>

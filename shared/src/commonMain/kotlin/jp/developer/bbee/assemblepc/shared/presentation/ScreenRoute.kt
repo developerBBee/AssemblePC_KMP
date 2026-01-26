@@ -1,10 +1,6 @@
 package jp.developer.bbee.assemblepc.shared.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import assemblepc.shared.generated.resources.Res
@@ -62,25 +58,7 @@ val ROUTE_LIST: List<ScreenRoute> = listOf(
     AssemblyScreen,
 )
 
-fun MutableList<ScreenRoute>.navigateSingle(route: ScreenRoute) {
-    removeAll { it == route }
+fun <T : NavKey> MutableList<T>.navigateSingle(route: T) {
+    removeAll { it::class == route::class }
     add(route)
 }
-
-@Composable
-fun rememberNavBackStack(
-    startDestination: ScreenRoute = TopScreen
-): SnapshotStateList<ScreenRoute> {
-    return rememberSaveable(
-        saver = listSaver(
-            save = { list -> list.map { it.toIndex() } },
-            restore = { indices -> mutableStateListOf(*indices.map { it.toRoute() }.toTypedArray()) },
-        )
-    ) {
-        mutableStateListOf(startDestination)
-    }
-}
-
-private fun ScreenRoute.toIndex(): Int = ROUTE_LIST.indexOf(this)
-
-private fun Int.toRoute(): ScreenRoute = ROUTE_LIST[this]

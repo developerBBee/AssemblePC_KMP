@@ -29,6 +29,7 @@ fun BottomNavBar(
         backgroundColor = MaterialTheme.colors.surface,
     ) {
         ROUTE_LIST.forEach { screenRoute ->
+            val selected = currentRoute == screenRoute
             BottomNavigationItem(
                 icon = {
                     Icon(
@@ -37,19 +38,17 @@ fun BottomNavBar(
                     )
                 },
                 label = { Text(text = screenRoute.name()) },
-                selected = currentRoute == screenRoute,
+                selected = selected,
                 unselectedContentColor = LocalContentColor.current
                     .copy(alpha = if (enabled) ContentAlpha.high else ContentAlpha.disabled),
                 selectedContentColor = MaterialTheme.colors.primary,
                 enabled = enabled,
                 onClick = {
-                    currentRoute?.let { currentRoute ->
-                        // 現在の画面のルートと異なる場合のみ遷移する
-                        if (currentRoute != screenRoute) {
-                            navigateTo(screenRoute)
-                        }
+                    // 現在の画面のルートと異なる場合のみ遷移する
+                    if (!selected) {
+                        navigateTo(screenRoute)
                     }
-                }
+                },
             )
         }
     }
@@ -62,7 +61,7 @@ private fun BottomNavBarPreview() {
         BottomNavBar(
             currentRoute = ScreenRoute.TopScreen,
             enabled = true,
-            navigateTo = {}
+            navigateTo = {},
         )
     }
 }

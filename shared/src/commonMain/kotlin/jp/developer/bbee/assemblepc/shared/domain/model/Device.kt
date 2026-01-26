@@ -1,12 +1,11 @@
 package jp.developer.bbee.assemblepc.shared.domain.model
 
-import kotlin.time.ExperimentalTime
+import jp.developer.bbee.assemblepc.shared.domain.model.enums.DeviceType
 import kotlin.time.Instant
 
-@OptIn(ExperimentalTime::class)
 data class Device(
     val id: String,
-    val device: String,
+    val deviceType: DeviceType,
     val name: String,
     val imgUrl: String,
     val url: String,
@@ -29,7 +28,7 @@ data class Device(
             assemblyId = assemblyId,
             assemblyName = assemblyName,
             deviceId = id,
-            deviceType = device,
+            deviceType = deviceType,
             deviceName = name,
             deviceImgUrl = imgUrl,
             deviceDetail = detail,

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package jp.developer.bbee.assemblepc.shared.domain.model
 
 import jp.developer.bbee.assemblepc.shared.common.now
@@ -9,7 +7,6 @@ import jp.developer.bbee.assemblepc.shared.domain.model.serializer.InstantTokyoS
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 /**
@@ -96,7 +93,7 @@ data class CompositionItem(
     fun toDevice(): Device {
         return Device(
             id = deviceId,
-            device = deviceType.key,
+            deviceType = deviceType,
             name = deviceName,
             imgUrl = deviceImgUrl,
             url = url,
@@ -120,7 +117,7 @@ data class CompositionItem(
             return CompositionItem(
                 quantity = quantity,
                 deviceId = device.id,
-                deviceType = DeviceType.from(device.device),
+                deviceType = device.deviceType,
                 deviceName = device.name,
                 deviceImgUrl = device.imgUrl,
                 deviceDetail = device.detail,

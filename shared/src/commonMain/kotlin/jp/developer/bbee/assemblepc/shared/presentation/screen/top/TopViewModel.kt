@@ -1,6 +1,5 @@
 package jp.developer.bbee.assemblepc.shared.presentation.screen.top
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jp.developer.bbee.assemblepc.shared.domain.model.AssemblyReview
 import jp.developer.bbee.assemblepc.shared.domain.model.Composition
@@ -11,6 +10,7 @@ import jp.developer.bbee.assemblepc.shared.domain.use_case.RenameAssemblyUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.ReviewUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.SaveCurrentCompositionUseCase
 import jp.developer.bbee.assemblepc.shared.domain.use_case.UpdateAssemblyReviewUseCase
+import jp.developer.bbee.assemblepc.shared.presentation.common.BaseViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,19 +18,21 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.time.ExperimentalTime
+import kotlinx.coroutines.plus
 
-@OptIn(ExperimentalTime::class)
 class TopViewModel(
-    private val getCompositionsUseCase: GetCompositionsUseCase,
+    getCompositionsUseCase: GetCompositionsUseCase,
     private val deleteCompositionUseCase: DeleteCompositionUseCase,
     private val renameAssemblyUseCase: RenameAssemblyUseCase,
     private val getMaxAssemblyIdUseCase: GetMaxAssemblyIdUseCase,
     private val saveCurrentCompositionUseCase: SaveCurrentCompositionUseCase,
     private val reviewUseCase: ReviewUseCase,
     private val updateAssemblyReviewUseCase: UpdateAssemblyReviewUseCase,
-) : ViewModel() {
+) : BaseViewModel() {
     private val handler = CoroutineExceptionHandler { _, ex -> handleError(ex) }
     private val reviewHandler = CoroutineExceptionHandler { _, ex -> handleReviewError(ex) }
 
@@ -44,19 +46,17 @@ class TopViewModel(
     val navFlow: SharedFlow<TopSideEffect> = _navFlow.asSharedFlow()
 
     init {
-        viewModelScope.launch(handler) {
-            getCompositions()
-        }
-    }
-
-    private suspend fun getCompositions() {
-        val compositions = getCompositionsUseCase()
-        _uiState.value = TopUiState.Loaded(compositions)
-        val currentDialog = _dialogUiState.value
-        if (currentDialog is TopDialogUiState.ShowReview) {
-            val newCompo = compositions.first { it.assemblyId == currentDialog.compo.assemblyId }
-            _dialogUiState.value = TopDialogUiState.ShowReview(compo = newCompo)
-        }
+        getCompositionsUseCase()
+            .onEach { compositions ->
+                _uiState.value = TopUiState.Loaded(compositions)
+                val currentDialog = _dialogUiState.value
+                if (currentDialog is TopDialogUiState.ShowReview) {
+                    val newCompo = compositions
+                        .first { it.assemblyId == currentDialog.compo.assemblyId }
+                    _dialogUiState.value = TopDialogUiState.ShowReview(compo = newCompo)
+                }
+            }
+            .launchIn(viewModelScope + handler)
     }
 
     fun showCreateDialog() {
@@ -82,7 +82,6 @@ class TopViewModel(
         clearDialog()
         viewModelScope.launch(handler) {
             renameAssemblyUseCase(newName, assemblyId)
-            getCompositions()
         }
     }
 
@@ -90,15 +89,10 @@ class TopViewModel(
         _dialogUiState.value = TopDialogUiState.ShowDeleteConfirm(composition)
     }
 
-    fun deleteAssembly(
-        assemblyId: Int,
-        onComplete: () -> Unit
-    ) {
+    fun deleteAssembly(assemblyId: Int) {
         clearDialog()
         viewModelScope.launch(handler) {
             deleteCompositionUseCase(assemblyId)
-            getCompositions()
-            onComplete()
         }
     }
 
@@ -106,7 +100,7 @@ class TopViewModel(
         clearDialog()
 
         viewModelScope.launch(handler) {
-            val id = (getMaxAssemblyIdUseCase() ?: 0) + 1
+            val id = (getMaxAssemblyIdUseCase().first() ?: 0) + 1
             val newComposition = Composition(
                 assemblyId = id,
                 assemblyName = assemblyName,
@@ -144,7 +138,6 @@ class TopViewModel(
                     reviewText = reviewText,
                 )
                 updateAssemblyReviewUseCase(assemblyReview)
-                getCompositions()
             } else {
                 _dialogUiState.value = TopDialogUiState.ShowReview(
                     compo = reviewedComposition,
