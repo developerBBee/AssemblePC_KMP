@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>894417401836-2n83g5ik02pooec4pbhdthrgmur4r2hu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.894417401836-2n83g5ik02pooec4pbhdthrgmur4r2hu</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>894417401836-3qurd96obr9iv3pmfojk6n6sv7rajsbc.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA6zUachGcT9DhPtSt9v2Jlg8cpK2n4lZc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>894417401836</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>jp.developer.bbee.AssemblePC</string>
+	<key>PROJECT_ID</key>
+	<string>assemble-pc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>assemble-pc.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:894417401836:ios:f22607f2dd41becc54f2c9</string>
+</dict>
+</plist>
